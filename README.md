@@ -16,6 +16,7 @@ This widget is designed to be injectable within web games. It displays simple NL
 ## Integrate to Website
 
 Include those tags within the host HTML file.
-
+```html
 <div id="react-target"></div>
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
+```

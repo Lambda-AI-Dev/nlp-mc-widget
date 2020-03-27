@@ -118,7 +118,7 @@ const App = ({ api_id }) => {
                               fontSize: "medium"
                             }}
                           >
-                            🤗 Happy
+                            😔 Sad
                           </div>
                         </Radio>
                         <Radio style={radioStyle} value={3}>
@@ -129,7 +129,7 @@ const App = ({ api_id }) => {
                               fontSize: "medium"
                             }}
                           >
-                            🤗 Happy
+                            😠 Angry
                           </div>
                         </Radio>
                         <Radio style={radioStyle} value={4}>
@@ -140,7 +140,7 @@ const App = ({ api_id }) => {
                               fontSize: "medium"
                             }}
                           >
-                            🤗 Unsure
+                            ❔ Unsure
                           </div>
                         </Radio>
                       </Radio.Group>

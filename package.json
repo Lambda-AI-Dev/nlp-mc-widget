@@ -9,11 +9,10 @@
     "deploy": "aws s3 cp ./dist/bundle.js s3://widget-deployment/ --acl public-read"
   },
   "dependencies": {
-    "@material-ui/core": "^4.9.7",
     "antd": "^4.0.3",
+    "axios": "^0.19.2",
     "babel-plugin-import": "^1.13.0",
     "css-loader": "^3.4.2",
-
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "style-loader": "^1.1.3"

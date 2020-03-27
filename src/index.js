@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import style from "./style";
-import {
-  Paper,
-  Typography,
-  Backdrop,
-  Grid,
-  Button,
-  CircularProgress
-} from "@material-ui/core";
+import { Radio, Button, Typography, Row, Col, Skeleton } from "antd";
+import ReactDOM from "react-dom";
+import axios from "axios";
 
 const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 
-const App = ({ api_id }) => {
-  const [showHello, setShowHello] = useState(true);
-  const [showWidget, setShowWidget] = useState(true);
+const { Title, Text } = Typography;
+
+const useFetch = url => {
+  const [state, setState] = useState({ data: null, loading: true });
 
   useEffect(() => {
-    console.log(api_id);
+    setState({ data: state.data, loading: true });
+    axios.get(url).then(x => {
+      setState({ data: x.data, loading: false });
+    });
+  }, [url, setState]);
+
+  return state;
+};
+
+const App = ({ api_id }) => {
+  const { data, loading } = useFetch("https://quotes.rest/qod?language=en");
+  const [value, setValue] = useState(1);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    console.log(`API ID is: ${api_id}`);
   }, []);
 
   useEffect(() => {
     const onMouseMove = e => {
-      console.log(e);
+      //console.log(e);
     };
     window.addEventListener("mousemove", onMouseMove);
 
@@ -33,101 +43,134 @@ const App = ({ api_id }) => {
     };
   }, []);
 
+  const onChange = e => {
+    setValue(e.target.value);
+  };
+
+  const handleSubmit = () => {
+    setVisible(false);
+  };
+
+  const radioStyle = {
+    display: "block",
+    height: "50px",
+    width: "100%",
+    lineHeight: "30px",
+    background: "#3498db",
+    padding: "10px",
+    marginTop: "5px",
+    borderRadius: "10px"
+  };
+
   return (
     <div>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-      />
-      {showWidget && (
-        <Backdrop open={true}>
-          {showHello ? (
-            <Paper style={style.wforeground} elevation={0}>
-              <div style={{ margin: "60px" }}>
-                <Typography variant="h3" style={{ color: "white" }}>
-                  Hey, Help us with a quick question.
-                </Typography>
-
-                <Typography
-                  variant="subtitle2"
-                  style={{
-                    color: "white",
-                    marginTop: "20px",
-                    marginBottom: "20px"
-                  }}
-                >
-                  Please help us with a 5 second question and earn 100 points!
-                  This widget is supported by: Google AI.
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    setShowHello(false);
-                  }}
-                >
-                  Continue
-                </Button>
-              </div>
-            </Paper>
-          ) : (
-            <Paper style={style.foreground} elevation={0}>
-              <div>
-                <Typography
-                  variant="subtitle2"
-                  style={{ marginLeft: "20px", marginTop: "20px" }}
-                >
-                  Complete Task to Continue
-                </Typography>
-
-                <Paper
-                  style={{ margin: "20px", padding: "20px" }}
-                  elevation={1}
-                >
-                  <center>
-                    <Typography>
-                      Access quote of the day service. Use this to get the quote
-                      of the day in various categories. This is a free API that
-                      is available to public. You must credit They Said So if
-                      you are using the free version
-                    </Typography>
-                  </center>
-                </Paper>
-                <Grid container spacing={3} style={{ padding: "0px 20px" }}>
-                  <Grid item xs={6}>
-                    <Paper style={{ padding: "10px" }}>
-                      <Typography>Hello</Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Paper style={{ padding: "10px" }}>
-                      <Typography>Hello</Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Paper style={{ padding: "10px" }}>
-                      <Typography>Hello</Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Paper style={{ padding: "10px" }}>
-                      <Typography>Hello</Typography>
-                    </Paper>
-                  </Grid>
-                </Grid>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  style={{ display: "block", float: "right", margin: "20px" }}
-                  onClick={() => {
-                    setShowWidget(false);
-                  }}
-                >
-                  Submit
-                </Button>
-              </div>
-            </Paper>
-          )}
-        </Backdrop>
+      {visible && (
+        <div style={style.background}>
+          <div style={style.foreground}>
+            <div>
+              {loading ? (
+                <Skeleton active style={{ verticalAlign: "middle" }} />
+              ) : (
+                <div>
+                  <Row>
+                    <Col>
+                      <center>
+                        <Title level={4}>
+                          Select the Category for the Following Text
+                        </Title>
+                      </center>
+                    </Col>
+                  </Row>
+                  <Row style={{ marginTop: "10px" }}>
+                    <Col span={18}>
+                      <div
+                        style={{
+                          background: "white",
+                          borderRadius: "10px",
+                          padding: "10px",
+                          margin: "5px",
+                          height: "215px"
+                        }}
+                      >
+                        <Text style={{ fontSize: "medium" }}>
+                          {data.contents.quotes[0].quote}
+                        </Text>
+                      </div>
+                    </Col>
+                    <Col span={6} style={{ paddingLeft: "10px" }}>
+                      <Radio.Group onChange={onChange} value={value}>
+                        <Radio style={radioStyle} value={1}>
+                          <div
+                            style={{
+                              color: "white",
+                              display: "inline",
+                              fontSize: "medium"
+                            }}
+                          >
+                            🤗 Happy
+                          </div>
+                        </Radio>
+                        <Radio style={radioStyle} value={2}>
+                          <div
+                            style={{
+                              color: "white",
+                              display: "inline",
+                              fontSize: "medium"
+                            }}
+                          >
+                            🤗 Happy
+                          </div>
+                        </Radio>
+                        <Radio style={radioStyle} value={3}>
+                          <div
+                            style={{
+                              color: "white",
+                              display: "inline",
+                              fontSize: "medium"
+                            }}
+                          >
+                            🤗 Happy
+                          </div>
+                        </Radio>
+                        <Radio style={radioStyle} value={4}>
+                          <div
+                            style={{
+                              color: "white",
+                              display: "inline",
+                              fontSize: "medium"
+                            }}
+                          >
+                            🤗 Unsure
+                          </div>
+                        </Radio>
+                      </Radio.Group>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <center style={{ padding: "5px" }}>
+                        <Button
+                          type="primary"
+                          size="large"
+                          style={{
+                            marginTop: "15px",
+                            width: "100px",
+                            borderRadius: "10px"
+                          }}
+                          onClick={() => {
+                            handleSubmit();
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </center>
+                    </Col>
+                  </Row>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -18,17 +18,9 @@ const style = {
     marginTop: "-200px",
     top: "50%",
     left: "50%",
-    background: "linear-gradient(to right, #e0eafc, #cfdef3)"
-  },
-  wforeground: {
-    position: "absolute",
-    height: "400px",
-    width: "600px",
-    marginLeft: "-300px",
-    marginTop: "-200px",
-    top: "50%",
-    left: "50%",
-    background: "#3498db"
+    background: "#ecf0f1",
+    borderRadius: "20px",
+    padding: "30px"
   }
 };
 

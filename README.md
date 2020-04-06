@@ -20,3 +20,10 @@ Include those tags within the host HTML file.
 <div id="lambda-target" api_id="hello world"></div>
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
 ```
+
+## Project Roadmap
+- [ ] Dynamically render multi-class / single-class selection UI
+- [ ] Handle User Submission
+- [ ] Create Submission UI
+- [ ] Make sure CSS does not affect target HTML
+- [ ] Re-load Widget from target HTML

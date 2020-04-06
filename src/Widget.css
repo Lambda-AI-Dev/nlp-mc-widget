@@ -1,0 +1,57 @@
+.lambda-background {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+}
+
+.lambda-foreground {
+    position: absolute;
+    height: 400px;
+    width: 600px;
+    margin-left: -300px;
+    margin-top: -200px;
+    top: 50%;
+    left: 50%;
+    background: #ecf0f1;
+    border-radius: 20px;
+    padding: 30px;
+    z-index: "99";
+}
+
+.lambda-textbg {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+    height: 215px;
+}
+
+.lambda-radiostyle {
+    display: block;
+    height: 50px;
+    width: 100%;
+    line-height: 30px;
+    background: #3498db;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 10px;
+}
+
+.lambda-radiocell {
+    color: white;
+    display: inline;
+    font-size: medium;
+}
+
+.lambda-submit {
+    margin-top: 15px;
+    width: 100px;
+    border-radius: 10px;
+}

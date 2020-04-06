@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
-import style from "./style";
 import { Radio, Button, Typography, Row, Col, Skeleton } from "antd";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import crypto from "crypto";
+import "./Widget.css";
 
 const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 
 const { Title, Text } = Typography;
 
-const useFetch = url => {
+const useFetch = (url) => {
   const [state, setState] = useState({ data: null, loading: true });
 
   useEffect(() => {
     setState({ data: state.data, loading: true });
-    axios.get(url).then(x => {
+    console.log(url);
+    axios.get(url).then((x) => {
       setState({ data: x.data, loading: false });
     });
   }, [url, setState]);
@@ -22,18 +24,57 @@ const useFetch = url => {
   return state;
 };
 
+const generateId = () => {
+  const id = crypto.randomBytes(16).toString("hex");
+  return id;
+};
+
+const getIdFromStorage = () => {
+  const labelerId = JSON.parse(localStorage.getItem("labelerId"));
+  if (!labelerId) {
+    const id = generateId();
+    localStorage.setItem("labelerId", JSON.stringify(id));
+    return id;
+  } else {
+    return labelerId;
+  }
+};
+
 const App = ({ api_id }) => {
-  const { data, loading } = useFetch("https://quotes.rest/qod?language=en");
+  const baseUrl =
+    "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/prod/labelers/";
+  const labelerId = getIdFromStorage();
+  const { data, loading } = useFetch(baseUrl + labelerId);
   const [value, setValue] = useState(1);
-  const [visible, setVisible] = useState(true);
+  const [parsedData, setParsedData] = useState();
 
   useEffect(() => {
     console.log(`API ID is: ${api_id}`);
+    console.log("Labeler Id: ", labelerId);
   }, []);
 
   useEffect(() => {
-    const onMouseMove = e => {
-      //console.log(e);
+    if (data) {
+      const rawData = data[0];
+      let parsedData = {};
+      const classList = Object.keys(rawData.class).map((key) => {
+        return key;
+      });
+      parsedData = {
+        instructions: rawData.instructions,
+        multiclass: rawData.multiclass,
+        class: classList,
+        data: rawData.data,
+        type: rawData.type,
+      };
+
+      setParsedData(parsedData);
+    }
+  }, [data, loading]);
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      // console.log(e);
     };
     window.addEventListener("mousemove", onMouseMove);
 
@@ -43,142 +84,86 @@ const App = ({ api_id }) => {
     };
   }, []);
 
-  const onChange = e => {
+  const onChange = (e) => {
     setValue(e.target.value);
   };
 
   const handleSubmit = () => {
-    setVisible(false);
+    ReactDOM.unmountComponentAtNode(document.getElementById(INJECT_DIV_TAG));
   };
 
-  const radioStyle = {
-    display: "block",
-    height: "50px",
-    width: "100%",
-    lineHeight: "30px",
-    background: "#3498db",
-    padding: "10px",
-    marginTop: "5px",
-    borderRadius: "10px"
+  const RadioList = ({ list }) => {
+    const RadioList = list.map((value, index) => {
+      return (
+        <Radio className="lambda-radiostyle" value={index} key={index}>
+          <div className="lambda-radiocell">{value}</div>
+        </Radio>
+      );
+    });
+
+    return RadioList;
   };
 
   return (
     <div>
-      {visible && (
-        <div style={style.background}>
-          <div style={style.foreground}>
-            <div>
-              {loading ? (
-                <Skeleton active style={{ verticalAlign: "middle" }} />
-              ) : (
-                <div>
-                  <Row>
-                    <Col>
-                      <center>
-                        <Title level={4}>
-                          Select the Category for the Following Text
-                        </Title>
-                      </center>
-                    </Col>
-                  </Row>
-                  <Row style={{ marginTop: "10px" }}>
-                    <Col span={18}>
-                      <div
-                        style={{
-                          background: "white",
-                          borderRadius: "10px",
-                          padding: "10px",
-                          margin: "5px",
-                          height: "215px"
+      <div className="lambda-background">
+        <div className="lambda-foreground">
+          <div>
+            {loading ? (
+              <Skeleton active />
+            ) : (
+              <div>
+                <Row>
+                  <Col>
+                    <center>
+                      <Title level={4}>
+                        {parsedData && parsedData.instructions}
+                      </Title>
+                    </center>
+                  </Col>
+                </Row>
+                <Row style={{ marginTop: "10px" }}>
+                  <Col span={18}>
+                    <div className="lambda-textbg">
+                      <Text style={{ fontSize: "medium" }}>
+                        {parsedData && parsedData.data}
+                      </Text>
+                    </div>
+                  </Col>
+                  <Col span={6} style={{ paddingLeft: "10px" }}>
+                    <Radio.Group onChange={onChange} value={value}>
+                      {parsedData && <RadioList list={parsedData.class} />}
+                    </Radio.Group>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <center style={{ padding: "5px" }}>
+                      <Button
+                        type="primary"
+                        size="large"
+                        className="lambda-submit"
+                        onClick={() => {
+                          handleSubmit();
                         }}
                       >
-                        <Text style={{ fontSize: "medium" }}>
-                          {data.contents.quotes[0].quote}
-                        </Text>
-                      </div>
-                    </Col>
-                    <Col span={6} style={{ paddingLeft: "10px" }}>
-                      <Radio.Group onChange={onChange} value={value}>
-                        <Radio style={radioStyle} value={1}>
-                          <div
-                            style={{
-                              color: "white",
-                              display: "inline",
-                              fontSize: "medium"
-                            }}
-                          >
-                            🤗 Happy
-                          </div>
-                        </Radio>
-                        <Radio style={radioStyle} value={2}>
-                          <div
-                            style={{
-                              color: "white",
-                              display: "inline",
-                              fontSize: "medium"
-                            }}
-                          >
-                            😔 Sad
-                          </div>
-                        </Radio>
-                        <Radio style={radioStyle} value={3}>
-                          <div
-                            style={{
-                              color: "white",
-                              display: "inline",
-                              fontSize: "medium"
-                            }}
-                          >
-                            😠 Angry
-                          </div>
-                        </Radio>
-                        <Radio style={radioStyle} value={4}>
-                          <div
-                            style={{
-                              color: "white",
-                              display: "inline",
-                              fontSize: "medium"
-                            }}
-                          >
-                            ❔ Unsure
-                          </div>
-                        </Radio>
-                      </Radio.Group>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col>
-                      <center style={{ padding: "5px" }}>
-                        <Button
-                          type="primary"
-                          size="large"
-                          style={{
-                            marginTop: "15px",
-                            width: "100px",
-                            borderRadius: "10px"
-                          }}
-                          onClick={() => {
-                            handleSubmit();
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </center>
-                    </Col>
-                  </Row>
-                </div>
-              )}
-            </div>
+                        Submit
+                      </Button>
+                    </center>
+                  </Col>
+                </Row>
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 ReactDOM.render(
   React.createElement(App, {
-    api_id: document.getElementById(INJECT_DIV_TAG).getAttribute(API_ID_NAME)
+    api_id: document.getElementById(INJECT_DIV_TAG).getAttribute(API_ID_NAME),
   }),
   document.getElementById(INJECT_DIV_TAG)
 );

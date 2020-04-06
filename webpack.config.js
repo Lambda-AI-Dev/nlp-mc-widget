@@ -1,3 +1,6 @@
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+  .BundleAnalyzerPlugin;
+
 module.exports = {
   entry: "./src/index.js",
   module: {
@@ -22,6 +25,7 @@ module.exports = {
       }
     ]
   },
+  // plugins: [new BundleAnalyzerPlugin()],
   resolve: {
     extensions: ["*", ".js", ".jsx"]
   },

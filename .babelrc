@@ -3,7 +3,13 @@
   "plugins": [
     [
       "import",
-      { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }
-    ] // `style: true` for less
+      {
+        "libraryName": "antd",
+        "libraryDirectory": "es",
+        "style": "css"
+      }
+    ], // `style: true` for less
+
+    ["@babel/plugin-proposal-class-properties"]
   ]
 }

@@ -7,22 +7,11 @@ import "./Widget.css";
 
 const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
+const BASE_URL =
+  "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/prod/labelers/";
+const container = document.getElementById(INJECT_DIV_TAG);
 
 const { Title, Text } = Typography;
-
-const useFetch = (url) => {
-  const [state, setState] = useState({ data: null, loading: true });
-
-  useEffect(() => {
-    setState({ data: state.data, loading: true });
-    console.log(url);
-    axios.get(url).then((x) => {
-      setState({ data: x.data, loading: false });
-    });
-  }, [url, setState]);
-
-  return state;
-};
 
 const generateId = () => {
   const id = crypto.randomBytes(16).toString("hex");
@@ -40,37 +29,43 @@ const getIdFromStorage = () => {
   }
 };
 
-const App = ({ api_id }) => {
-  const baseUrl =
-    "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/prod/labelers/";
-  const labelerId = getIdFromStorage();
-  const { data, loading } = useFetch(baseUrl + labelerId);
-  const [value, setValue] = useState(1);
+const Widget = ({ api_id, closeModal, fetchUrl }) => {
+  const [value, setValue] = useState(0);
   const [parsedData, setParsedData] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(`API ID is: ${api_id}`);
-    console.log("Labeler Id: ", labelerId);
-  }, []);
+    console.log(api_id);
+  });
 
   useEffect(() => {
-    if (data) {
-      const rawData = data[0];
-      let parsedData = {};
-      const classList = Object.keys(rawData.class).map((key) => {
-        return key;
+    axios
+      .get(fetchUrl)
+      .then((raw) => {
+        const data = raw.data;
+        if (data) {
+          const rawData = data[0];
+          let parsedData = {};
+          const classList = Object.keys(rawData.class).map((key) => {
+            return key;
+          });
+          parsedData = {
+            instructions: rawData.instructions,
+            multiclass: rawData.multiclass,
+            class: classList,
+            data: rawData.data,
+            type: rawData.type,
+          };
+
+          setParsedData(parsedData);
+          setLoading(false);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        closeModal();
       });
-      parsedData = {
-        instructions: rawData.instructions,
-        multiclass: rawData.multiclass,
-        class: classList,
-        data: rawData.data,
-        type: rawData.type,
-      };
-
-      setParsedData(parsedData);
-    }
-  }, [data, loading]);
+  }, [loading]);
 
   useEffect(() => {
     const onMouseMove = (e) => {
@@ -89,7 +84,7 @@ const App = ({ api_id }) => {
   };
 
   const handleSubmit = () => {
-    ReactDOM.unmountComponentAtNode(document.getElementById(INJECT_DIV_TAG));
+    closeModal();
   };
 
   const RadioList = ({ list }) => {
@@ -161,9 +156,43 @@ const App = ({ api_id }) => {
   );
 };
 
+class WidgetContainer extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      open: false,
+      api_id: props.api_id,
+    };
+  }
+
+  openModal = () => {
+    this.setState({ open: true });
+  };
+
+  closeModal = () => {
+    this.setState({ open: false });
+  };
+
+  render() {
+    return (
+      <div>
+        {this.state.open && (
+          <Widget
+            api_id={this.state.api_id}
+            closeModal={this.closeModal}
+            fetchUrl={BASE_URL + getIdFromStorage()}
+          />
+        )}
+      </div>
+    );
+  }
+}
+
 ReactDOM.render(
-  React.createElement(App, {
-    api_id: document.getElementById(INJECT_DIV_TAG).getAttribute(API_ID_NAME),
-  }),
-  document.getElementById(INJECT_DIV_TAG)
+  <WidgetContainer
+    api_id={document.getElementById(INJECT_DIV_TAG).getAttribute(API_ID_NAME)}
+    ref={(lambdaWidget) => (window.lambdaWidget = lambdaWidget)}
+  />,
+  container
 );

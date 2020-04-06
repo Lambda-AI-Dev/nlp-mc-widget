@@ -17,6 +17,6 @@ This widget is designed to be injectable within web games. It displays simple NL
 
 Include those tags within the host HTML file.
 ```html
-<div id="react-target"></div>
+<div id="lambda-target" api_id="hello world"></div>
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
 ```

@@ -17,13 +17,12 @@ This widget is designed to be injectable within web games. It displays simple NL
 
 Include those tags within the host HTML file.
 ```html
-<div id="lambda-target" api_id="hello world"></div>
+<div id="lambda-target" api_id="1234567812345678"></div>
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
 ```
 
-## Project Roadmap
+## To-Do
 - [ ] Dynamically render multi-class / single-class selection UI
 - [ ] Handle User Submission
-- [ ] Create Submission UI
-- [ ] Make sure CSS does not affect target HTML
-- [ ] Re-load Widget from target HTML
+- [ ] Create Submission Animation
+- [ ] Fix CSS Pollution Issue

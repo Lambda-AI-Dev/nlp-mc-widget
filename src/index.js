@@ -8,7 +8,7 @@ import "./Widget.css";
 const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 const BASE_URL =
-  "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/prod/labelers/";
+  "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/";
 const container = document.getElementById(INJECT_DIV_TAG);
 
 const { Title, Text } = Typography;
@@ -29,18 +29,18 @@ const getIdFromStorage = () => {
   }
 };
 
-const Widget = ({ api_id, closeModal, fetchUrl }) => {
+const Widget = ({ api_id, closeModal, postResponse }) => {
   const [value, setValue] = useState(0);
   const [parsedData, setParsedData] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     console.log(api_id);
-  });
+  }, [setLoading]);
 
   useEffect(() => {
     axios
-      .get(fetchUrl)
+      .get(`${BASE_URL}/labelers/${getIdFromStorage()}/developers/${api_id}`)
       .then((raw) => {
         const data = raw.data;
         if (data) {
@@ -52,11 +52,18 @@ const Widget = ({ api_id, closeModal, fetchUrl }) => {
           parsedData = {
             instructions: rawData.instructions,
             multiclass: rawData.multiclass,
+            taskId: rawData.taskId,
             class: classList,
             data: rawData.data,
             type: rawData.type,
+            labelerId: rawData.labelerId,
+            jobId: rawData.jobId,
+            labelingMethod: rawData.labelingMethod,
+            stoppedByTimer: rawData.stoppedByTimer,
+            beginTimestamp: rawData.beginTimestamp,
+            endTimestamp: rawData.endTimestamp,
           };
-
+          console.log(parsedData);
           setParsedData(parsedData);
           setLoading(false);
         }
@@ -65,7 +72,7 @@ const Widget = ({ api_id, closeModal, fetchUrl }) => {
         console.log(e);
         closeModal();
       });
-  }, [loading]);
+  }, [setLoading]);
 
   useEffect(() => {
     const onMouseMove = (e) => {
@@ -84,6 +91,29 @@ const Widget = ({ api_id, closeModal, fetchUrl }) => {
   };
 
   const handleSubmit = () => {
+    postResponse({
+      results: [
+        {
+          instructions: "Choose the appropriate sentiment for this text.",
+          multiclass: false,
+          taskId: "1413413089602753",
+          class: {
+            Negative: false,
+            Neutral: false,
+            Positive: false,
+          },
+          data: "I am Daniel.",
+          type: "text",
+          labelerId: "5307751900195447",
+          jobId: "8916346609042891",
+          labelingMethod: "multipleChoice",
+          stoppedByTimer: null,
+          beginTimestamp: null,
+          endTimestamp: null,
+          developerId: "5445029971295084",
+        },
+      ],
+    });
     closeModal();
   };
 
@@ -174,6 +204,20 @@ class WidgetContainer extends React.Component {
     this.setState({ open: false });
   };
 
+  postResponse = (data) => {
+    axios
+      .post(
+        "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/tasks",
+        data
+      )
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
   render() {
     return (
       <div>
@@ -181,7 +225,7 @@ class WidgetContainer extends React.Component {
           <Widget
             api_id={this.state.api_id}
             closeModal={this.closeModal}
-            fetchUrl={BASE_URL + getIdFromStorage()}
+            postResponse={this.postResponse}
           />
         )}
       </div>

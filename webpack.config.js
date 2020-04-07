@@ -8,33 +8,33 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ["babel-loader"]
+        use: ["babel-loader"],
       },
       { test: /\.css$/, loader: "style-loader!css-loader" },
       {
         test: /\.(pdf|jpg|png|gif|svg|ico)$/,
         use: [
           {
-            loader: "url-loader"
-          }
-        ]
+            loader: "url-loader",
+          },
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        loader: "file-loader"
-      }
-    ]
+        loader: "file-loader",
+      },
+    ],
   },
   // plugins: [new BundleAnalyzerPlugin()],
   resolve: {
-    extensions: ["*", ".js", ".jsx"]
+    extensions: ["*", ".js", ".jsx"],
   },
   output: {
     path: __dirname + "/dist",
     publicPath: "/",
-    filename: "bundle.js"
+    filename: "bundle.js",
   },
   devServer: {
-    contentBase: "./dist"
-  }
+    contentBase: "./dist",
+  },
 };

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Radio, Button, Typography, Row, Col, Skeleton } from "antd";
+import { Radio } from "antd";
+import { Button, Grid, Loader } from "semantic-ui-react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import crypto from "crypto";
 import "./Widget.css";
+import "semantic-ui-css/components/button.css";
+import "semantic-ui-css/components/grid.css";
+import "semantic-ui-css/components/segment.css";
+import "semantic-ui-css/components/loader.css";
 
 const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 const BASE_URL =
   "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/";
 const container = document.getElementById(INJECT_DIV_TAG);
-
-const { Title, Text } = Typography;
 
 const generateId = () => {
   const id = crypto.randomBytes(16).toString("hex");
@@ -135,48 +138,47 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
         <div className="lambda-foreground">
           <div>
             {loading ? (
-              <Skeleton active />
+              <Loader active inline="centered" style={{ marginTop: "160px" }}>
+                Loading
+              </Loader>
             ) : (
               <div>
-                <Row>
-                  <Col>
-                    <center>
-                      <Title level={4}>
-                        {parsedData && parsedData.instructions}
-                      </Title>
-                    </center>
-                  </Col>
-                </Row>
-                <Row style={{ marginTop: "10px" }}>
-                  <Col span={18}>
-                    <div className="lambda-textbg">
-                      <Text style={{ fontSize: "medium" }}>
+                <Grid columns="equal">
+                  <Grid.Row style={{ padding: "0px" }}>
+                    <Grid.Column>
+                      <center>
+                        <h2>{parsedData && parsedData.instructions}</h2>
+                      </center>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column width={12}>
+                      <div className="lambda-textbg">
                         {parsedData && parsedData.data}
-                      </Text>
-                    </div>
-                  </Col>
-                  <Col span={6} style={{ paddingLeft: "10px" }}>
-                    <Radio.Group onChange={onChange} value={value}>
-                      {parsedData && <RadioList list={parsedData.class} />}
-                    </Radio.Group>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <center style={{ padding: "5px" }}>
-                      <Button
-                        type="primary"
-                        size="large"
-                        className="lambda-submit"
-                        onClick={() => {
-                          handleSubmit();
-                        }}
-                      >
-                        Submit
-                      </Button>
-                    </center>
-                  </Col>
-                </Row>
+                      </div>
+                    </Grid.Column>
+                    <Grid.Column style={{ paddingLeft: "10px" }}>
+                      <Radio.Group onChange={onChange} value={value}>
+                        {parsedData && <RadioList list={parsedData.class} />}
+                      </Radio.Group>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column>
+                      <center>
+                        <Button
+                          primary
+                          className="lambda-submit"
+                          onClick={() => {
+                            handleSubmit();
+                          }}
+                        >
+                          Submit
+                        </Button>
+                      </center>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
               </div>
             )}
           </div>

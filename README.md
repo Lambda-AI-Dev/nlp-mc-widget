@@ -23,6 +23,6 @@ Include those tags within the host HTML file.
 
 ## To-Do
 - [ ] Dynamically render multi-class / single-class selection UI
-- [ ] Handle User Submission
+- [ ] Show error message when empty
+- [ ] Fix Button alignment issue on deployment
 - [ ] Create Submission Animation
-- [ ] Fix CSS Pollution Issue

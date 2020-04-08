@@ -172,14 +172,17 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
                   </Grid.Row>
                   <Grid.Row>
                     <Grid.Column>
-                      <Button
-                        primary
-                        onClick={() => {
-                          handleSubmit();
-                        }}
-                      >
-                        Submit
-                      </Button>
+                      <center>
+                        <Button
+                          primary
+                          onClick={() => {
+                            handleSubmit();
+                          }}
+                          style={{ width: "130px" }}
+                        >
+                          Done
+                        </Button>
+                      </center>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>

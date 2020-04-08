@@ -170,18 +170,19 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
                       </Form>
                     </Grid.Column>
                   </Grid.Row>
+                  <Grid.Row>
+                    <Grid.Column>
+                      <Button
+                        primary
+                        onClick={() => {
+                          handleSubmit();
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    </Grid.Column>
+                  </Grid.Row>
                 </Grid>
-                <center style={{ marginTop: "30px" }}>
-                  <Button
-                    primary
-                    className="lambda-submit"
-                    onClick={() => {
-                      handleSubmit();
-                    }}
-                  >
-                    Submit
-                  </Button>
-                </center>
               </div>
             )}
           </div>

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Radio } from "antd";
-import { Button, Grid, Loader } from "semantic-ui-react";
+import { Button, Grid, Loader, Form, Checkbox } from "semantic-ui-react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import crypto from "crypto";
+import cloneDeep from "lodash/cloneDeep";
 import "./Widget.css";
 import "semantic-ui-css/components/button.css";
+// WARNING: the node css below is modified extensively
+import "./checkbox.css";
+import "semantic-ui-css/components/form.css";
 import "semantic-ui-css/components/grid.css";
 import "semantic-ui-css/components/segment.css";
 import "semantic-ui-css/components/loader.css";
@@ -33,13 +36,9 @@ const getIdFromStorage = () => {
 };
 
 const Widget = ({ api_id, closeModal, postResponse }) => {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState();
   const [parsedData, setParsedData] = useState();
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    console.log(api_id);
-  }, [setLoading]);
 
   useEffect(() => {
     axios
@@ -66,7 +65,6 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
             beginTimestamp: rawData.beginTimestamp,
             endTimestamp: rawData.endTimestamp,
           };
-          console.log(parsedData);
           setParsedData(parsedData);
           setLoading(false);
         }
@@ -84,48 +82,57 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
     window.addEventListener("mousemove", onMouseMove);
 
     return () => {
-      console.log("unmount");
       window.removeEventListener("mousemove", onMouseMove);
     };
   }, []);
 
-  const onChange = (e) => {
-    setValue(e.target.value);
+  const handleChange = (e, { value }) => {
+    setValue(value);
   };
 
   const handleSubmit = () => {
-    postResponse({
-      results: [
-        {
-          instructions: "Choose the appropriate sentiment for this text.",
-          multiclass: false,
-          taskId: "1413413089602753",
-          class: {
-            Negative: false,
-            Neutral: false,
-            Positive: false,
-          },
-          data: "I am Daniel.",
-          type: "text",
-          labelerId: "5307751900195447",
-          jobId: "8916346609042891",
-          labelingMethod: "multipleChoice",
-          stoppedByTimer: null,
-          beginTimestamp: null,
-          endTimestamp: null,
-          developerId: "5445029971295084",
-        },
-      ],
-    });
-    closeModal();
+    if (value) {
+      let classObj = {};
+      parsedData.class.forEach((c) => {
+        classObj[c] = c === value;
+      });
+      let postObj = cloneDeep(parsedData);
+      delete postObj.class;
+      postObj.class = classObj;
+
+      postResponse({
+        results: [postObj],
+      });
+      closeModal();
+    } else {
+      // display error
+    }
+    return;
   };
 
   const RadioList = ({ list }) => {
-    const RadioList = list.map((value, index) => {
+    const RadioList = list.map((v, index) => {
       return (
-        <Radio className="lambda-radiostyle" value={index} key={index}>
-          <div className="lambda-radiocell">{value}</div>
-        </Radio>
+        <Form.Field
+          key={index}
+          style={{
+            display: "block",
+            padding: "5%",
+            backgroundColor: "#1abc9c",
+            width: "90.5%",
+            margin: "5px 0px 0px 0px",
+            lineHeight: "35px",
+            borderRadius: "10px",
+          }}
+        >
+          <Checkbox
+            radio
+            label={v}
+            value={v}
+            checked={v === value}
+            onChange={handleChange}
+          />
+        </Form.Field>
       );
     });
 
@@ -138,7 +145,7 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
         <div className="lambda-foreground">
           <div>
             {loading ? (
-              <Loader active inline="centered" style={{ marginTop: "160px" }}>
+              <Loader active inline="centered" style={{ marginTop: "180px" }}>
                 Loading
               </Loader>
             ) : (
@@ -152,33 +159,29 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={12}>
+                    <Grid.Column width={12} style={{ paddingLeft: "0px" }}>
                       <div className="lambda-textbg">
                         {parsedData && parsedData.data}
                       </div>
                     </Grid.Column>
-                    <Grid.Column style={{ paddingLeft: "10px" }}>
-                      <Radio.Group onChange={onChange} value={value}>
+                    <Grid.Column style={{ padding: "0px" }}>
+                      <Form>
                         {parsedData && <RadioList list={parsedData.class} />}
-                      </Radio.Group>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column>
-                      <center>
-                        <Button
-                          primary
-                          className="lambda-submit"
-                          onClick={() => {
-                            handleSubmit();
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </center>
+                      </Form>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
+                <center style={{ marginTop: "30px" }}>
+                  <Button
+                    primary
+                    className="lambda-submit"
+                    onClick={() => {
+                      handleSubmit();
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </center>
               </div>
             )}
           </div>

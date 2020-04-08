@@ -23,7 +23,7 @@
     left: 50%;
     background: #ecf0f1;
     border-radius: 20px;
-    padding: 30px;
+    padding: 40px;
     z-index: "99";
     font-family: 'Lato', sans-serif;
 }
@@ -55,7 +55,7 @@
 }
 
 .lambda-submit {
-    margin-top: 15px;
     width: 150px;
     border-radius: 10px;
+    z-index: 99;
 }

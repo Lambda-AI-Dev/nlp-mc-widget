@@ -37,23 +37,6 @@
     font-size: 20px;
 }
 
-.lambda-radiostyle {
-    display: block;
-    height: 50px;
-    width: 100%;
-    line-height: 30px;
-    background: #3498db;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 10px;
-}
-
-.lambda-radiocell {
-    color: white;
-    display: inline;
-    font-size: medium;
-}
-
 .lambda-submit {
     width: 150px;
     border-radius: 10px;

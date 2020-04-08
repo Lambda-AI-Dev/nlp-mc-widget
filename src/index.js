@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import crypto from "crypto";
 import cloneDeep from "lodash/cloneDeep";
-import "./Widget.css";
+import "./widget.css";
 import "semantic-ui-css/components/button.css";
 // WARNING: the node css below is modified extensively
 import "./checkbox.css";

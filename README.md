@@ -22,6 +22,11 @@ Include those tags within the host HTML file.
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
 ```
 
+Then you can trigger the widget by calling the following function:
+```
+window.lambdaWidget.openModal();
+```
+
 ## To-Do
 
 - [ ] Dynamically render multi-class / single-class selection UI

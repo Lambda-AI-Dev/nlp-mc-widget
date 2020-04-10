@@ -4,9 +4,10 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import crypto from "crypto";
 import cloneDeep from "lodash/cloneDeep";
+import "@lottiefiles/lottie-player";
 import "./widget.css";
 import "semantic-ui-css/components/button.css";
-// WARNING: the node css below is modified extensively
+// WARNING: the checkbox css below is modified extensively
 import "./checkbox.css";
 import "semantic-ui-css/components/form.css";
 import "semantic-ui-css/components/grid.css";
@@ -17,6 +18,8 @@ const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 const BASE_URL =
   "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/";
+const CHECK_IMG =
+  "https://assets4.lottiefiles.com/datafiles/uoZvuyyqr04CpMr/data.json";
 const container = document.getElementById(INJECT_DIV_TAG);
 
 const generateId = () => {
@@ -39,6 +42,7 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
   const [value, setValue] = useState();
   const [parsedData, setParsedData] = useState();
   const [loading, setLoading] = useState(true);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     axios
@@ -86,6 +90,14 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (showSuccess) {
+      setTimeout(() => {
+        closeModal();
+      }, 1600);
+    }
+  }, [showSuccess]);
+
   const handleChange = (e, { value }) => {
     setValue(value);
   };
@@ -103,7 +115,7 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
       postResponse({
         results: [postObj],
       });
-      closeModal();
+      setShowSuccess(true);
     } else {
       // display error
     }
@@ -150,42 +162,59 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
               </Loader>
             ) : (
               <div>
-                <Grid columns="equal">
-                  <Grid.Row style={{ padding: "0px" }}>
-                    <Grid.Column>
-                      <center>
-                        <h2>{parsedData && parsedData.instructions}</h2>
-                      </center>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column width={12} style={{ paddingLeft: "0px" }}>
-                      <div className="lambda-textbg">
-                        {parsedData && parsedData.data}
-                      </div>
-                    </Grid.Column>
-                    <Grid.Column style={{ padding: "0px" }}>
-                      <Form>
-                        {parsedData && <RadioList list={parsedData.class} />}
-                      </Form>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column>
-                      <center>
-                        <Button
-                          primary
-                          onClick={() => {
-                            handleSubmit();
-                          }}
-                          style={{ width: "130px" }}
-                        >
-                          Done
-                        </Button>
-                      </center>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
+                {showSuccess ? (
+                  <lottie-player
+                    autoplay
+                    mode="normal"
+                    src={CHECK_IMG}
+                    style={{
+                      height: "120px",
+                      width: "120px",
+                      position: "absolute",
+                      marginLeft: "-60px",
+                      marginTop: "-60px",
+                      top: "50%",
+                      left: "50%",
+                    }}
+                  ></lottie-player>
+                ) : (
+                  <Grid columns="equal">
+                    <Grid.Row style={{ padding: "0px" }}>
+                      <Grid.Column>
+                        <center>
+                          <h2>{parsedData && parsedData.instructions}</h2>
+                        </center>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <Grid.Column width={12} style={{ paddingLeft: "0px" }}>
+                        <div className="lambda-textbg">
+                          {parsedData && parsedData.data}
+                        </div>
+                      </Grid.Column>
+                      <Grid.Column style={{ padding: "0px" }}>
+                        <Form>
+                          {parsedData && <RadioList list={parsedData.class} />}
+                        </Form>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <Grid.Column>
+                        <center>
+                          <Button
+                            primary
+                            onClick={() => {
+                              handleSubmit();
+                            }}
+                            style={{ width: "130px" }}
+                          >
+                            Done
+                          </Button>
+                        </center>
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                )}
               </div>
             )}
           </div>
@@ -215,10 +244,7 @@ class WidgetContainer extends React.Component {
 
   postResponse = (data) => {
     axios
-      .post(
-        "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/tasks",
-        data
-      )
+      .post(`${BASE_URL}/tasks`, data)
       .then((response) => {
         console.log(response);
       })

@@ -16,13 +16,14 @@ This widget is designed to be injectable within web games. It displays simple NL
 ## Integrate to Website
 
 Include those tags within the host HTML file.
+
 ```html
 <div id="lambda-target" api_id="1234567812345678"></div>
 <script src="https://widget-deployment.s3-us-west-1.amazonaws.com/bundle.js"></script>
 ```
 
 ## To-Do
+
 - [ ] Dynamically render multi-class / single-class selection UI
 - [ ] Show error message when empty
 - [ ] Fix Button alignment issue on deployment
-- [ ] Create Submission Animation

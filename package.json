@@ -9,6 +9,7 @@
     "deploy": "aws s3 cp ./dist/bundle.js s3://widget-deployment/ --acl public-read"
   },
   "dependencies": {
+    "@lottiefiles/lottie-player": "^0.5.1",
     "antd": "^4.0.3",
     "axios": "^0.19.2",
     "lodash": "^4.17.15",

@@ -23,7 +23,7 @@ Include those tags within the host HTML file.
 ```
 
 Then you can trigger the widget by calling the following function:
-```
+```javascript
 window.lambdaWidget.openModal();
 ```
 

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, Loader, Form, Checkbox } from "semantic-ui-react";
+import { Grid, Loader, Form, Checkbox } from "semantic-ui-react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import crypto from "crypto";
 import cloneDeep from "lodash/cloneDeep";
+import Lottie from "react-lottie";
+import successAnimationData from "./success.json";
 import "@lottiefiles/lottie-player";
 import "./widget.css";
-import "semantic-ui-css/components/button.css";
 // WARNING: the checkbox css below is modified extensively
 import "./checkbox.css";
 import "semantic-ui-css/components/form.css";
@@ -18,8 +19,7 @@ const INJECT_DIV_TAG = "lambda-target";
 const API_ID_NAME = "api_id";
 const BASE_URL =
   "https://c95bs8qze0.execute-api.us-east-1.amazonaws.com/developerBeta/";
-const CHECK_IMG =
-  "https://assets4.lottiefiles.com/datafiles/uoZvuyyqr04CpMr/data.json";
+
 const container = document.getElementById(INJECT_DIV_TAG);
 
 const generateId = () => {
@@ -39,10 +39,29 @@ const getIdFromStorage = () => {
 };
 
 const Widget = ({ api_id, closeModal, postResponse }) => {
+  const normalSubmitStyle = {
+    width: "140px",
+    height: "45px",
+    backgroundColor: "#3498db",
+    color: "white",
+    borderRadius: "10px",
+    cursor: "default",
+  };
+
+  const hoverSubmitStyle = {
+    width: "140px",
+    height: "45px",
+    backgroundColor: "#3498db",
+    color: "rgba(0, 0, 0, 0.87)",
+    borderRadius: "10px",
+    cursor: "pointer",
+  };
+
   const [value, setValue] = useState();
   const [parsedData, setParsedData] = useState();
   const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [submitBtStyle, setSubmitBtStyle] = useState(normalSubmitStyle);
 
   useEffect(() => {
     axios
@@ -163,20 +182,25 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
             ) : (
               <div>
                 {showSuccess ? (
-                  <lottie-player
-                    autoplay
-                    mode="normal"
-                    src={CHECK_IMG}
+                  <Lottie
+                    options={{
+                      loop: false,
+                      autoplay: true,
+                      animationData: successAnimationData,
+                      rendererSettings: {
+                        preserveAspectRatio: "xMidYMid slice",
+                      },
+                    }}
+                    height={120}
+                    width={120}
                     style={{
-                      height: "120px",
-                      width: "120px",
                       position: "absolute",
                       marginLeft: "-60px",
                       marginTop: "-60px",
                       top: "50%",
                       left: "50%",
                     }}
-                  ></lottie-player>
+                  />
                 ) : (
                   <Grid columns="equal">
                     <Grid.Row style={{ padding: "0px" }}>
@@ -201,15 +225,29 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
                     <Grid.Row>
                       <Grid.Column>
                         <center>
-                          <Button
-                            primary
+                          <div
+                            style={submitBtStyle}
                             onClick={() => {
                               handleSubmit();
                             }}
-                            style={{ width: "130px" }}
+                            onMouseEnter={() => {
+                              setSubmitBtStyle(hoverSubmitStyle);
+                            }}
+                            onMouseLeave={() => {
+                              setSubmitBtStyle(normalSubmitStyle);
+                            }}
                           >
-                            Done
-                          </Button>
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: "50%",
+                                top: "47%",
+                                transform: "translate(-50%, -50%)",
+                              }}
+                            >
+                              Done
+                            </div>
+                          </div>
                         </center>
                       </Grid.Column>
                     </Grid.Row>

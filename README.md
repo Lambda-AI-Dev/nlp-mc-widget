@@ -26,4 +26,3 @@ Include those tags within the host HTML file.
 
 - [ ] Dynamically render multi-class / single-class selection UI
 - [ ] Show error message when empty
-- [ ] Fix Button alignment issue on deployment

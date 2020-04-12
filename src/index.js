@@ -176,7 +176,14 @@ const Widget = ({ api_id, closeModal, postResponse }) => {
         <div className="lambda-foreground">
           <div>
             {loading ? (
-              <Loader active inline="centered" style={{ marginTop: "180px" }}>
+              <Loader
+                active
+                style={{
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
                 Loading
               </Loader>
             ) : (

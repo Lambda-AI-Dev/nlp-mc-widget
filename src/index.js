@@ -23,7 +23,7 @@ const BASE_URL =
 const container = document.getElementById(INJECT_DIV_TAG);
 
 const generateId = () => {
-  const id = crypto.randomBytes(16).toString("hex");
+  const id = crypto.randomBytes(8).toString("hex");
   return id;
 };
 
